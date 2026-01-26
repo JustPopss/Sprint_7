@@ -8,6 +8,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import static model.UtilityCourierPOM.faker;
+
 public class UtilityOrderPOM {
 
     public static String orderEndpoint = "/api/v1/orders";
@@ -16,6 +18,7 @@ public class UtilityOrderPOM {
 
 
     static Faker faker = new Faker();
+
     public static final String FIRSTNAME = faker.name().firstName() + System.currentTimeMillis();
     public static final String LASTNAME = faker.name().lastName() + System.currentTimeMillis();
     public static final String ADDRES = faker.address().cityName();

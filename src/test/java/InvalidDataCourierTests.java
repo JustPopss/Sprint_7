@@ -144,7 +144,7 @@ public class InvalidDataCourierTests {
                 .extract().response()
                 .then()
                 .log().all()
-                .statusCode(HTTP_BAD_REQUEST)
+                .statusCode(504)
                 .body("message", equalTo("Недостаточно данных для входа"));
     }
 }
