@@ -41,8 +41,8 @@ src/test/java/
 │ └── UtilityCourierPOM.java # Настройки и константы
 ├── tests/ # Тесты
 │ ├── OrderTest.java # Основные тесты заказов
-│ ├── ValidDataCourierTests.java # Позитивные тесты курьеров
-│ └── InvalidDataCourierTests.java # Негативные тесты курьеров
+│ ├── LoginCourierTests.java # Позитивные тесты курьеров
+│ └── CreateCourierWithInvalidDataTests.java # Негативные тесты курьеров
 └── resources/ # Ресурсы
 
 

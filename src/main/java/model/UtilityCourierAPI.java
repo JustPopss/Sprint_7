@@ -2,12 +2,13 @@ package model;
 
 import com.github.javafaker.Faker;
 import io.restassured.http.ContentType;
-import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.notNullValue;
+import static java.net.HttpURLConnection.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.*;
 
-public class UtilityCourierPOM {
+public class UtilityCourierAPI {
 
     private static final String BASE_URI = "https://qa-scooter.praktikum-services.ru";
 
@@ -28,6 +29,8 @@ public class UtilityCourierPOM {
     public final String WRONGLOGIN = "@логин";
     public final String WRONGPASSWORD = "#пароль";
 
+    private Integer id;
+
     public String getLogin() {
         return LOGIN;
     }
@@ -36,26 +39,98 @@ public class UtilityCourierPOM {
         return PASSWORD;
     }
 
-    public static Response createCourier(CourierModel courierModel) {
-        return given()
+    public void createCourierExpectStatus_200_OK(CourierModel courierModel) {
+
+        given()
                 .log().all()
                 .contentType(ContentType.JSON)
                 .body(courierModel)
                 .when()
                 .post(COURIER_ENDPOINT)
                 .then()
-                .extract().response();
+                .log().body()
+                .statusCode(HTTP_CREATED)
+                .body("ok", equalTo(true));
     }
 
-    public static Response loginCourier(CourierModel courierModel) {
-        return given()
+    public void createCourierExpectStatus_400_BAD_REQUEST(CourierModel courierModel) {
+
+        given()
                 .log().all()
+                .contentType(ContentType.JSON)
+                .body(courierModel)
+                .when()
+                .post(COURIER_ENDPOINT)
+                .then()
+                .log().body()
+                .statusCode(HTTP_BAD_REQUEST)
+                .body("message", equalTo("Недостаточно данных для создания учетной записи"));
+    }
+
+
+    public void loginCourierExpectStatus_200_OK(CourierModel courierModel) {
+        id = given()
+                .log().body()
                 .contentType(ContentType.JSON)
                 .body(courierModel)
                 .when()
                 .post(LOGIN_COURIER_ENDPOINT)
                 .then()
-                .extract().response();
+                .log().body()
+                .statusCode(HTTP_OK)
+                .extract().path("id");
+        assertThat(id, greaterThan(0));
+    }
+
+    public void loginCourierExpectStatus_404_NOT_FOUND(CourierModel courierModel) {
+        given()
+                .log().body()
+                .contentType(ContentType.JSON)
+                .body(courierModel)
+                .when()
+                .post(LOGIN_COURIER_ENDPOINT)
+                .then()
+                .log().body()
+                .statusCode(HTTP_NOT_FOUND)
+                .body("message", equalTo("Учетная запись не найдена"));
+
+    }
+
+    public void loginCourierExpectStatus_400_BAD_REQUEST(CourierModel courierModel) {
+        given()
+                .log().body()
+                .contentType(ContentType.JSON)
+                .body("{\"password\": \"1234\"}")
+                .when()
+                .post(LOGIN_COURIER_ENDPOINT)
+                .then()
+                .log().body()
+                .statusCode(HTTP_BAD_REQUEST)
+                .body("message", equalTo("Недостаточно данных для входа"));
+
+    }
+
+    public void deleteCourierExpectStatus_200_OK() {
+        given()
+                .log().uri()
+                .contentType(ContentType.JSON)
+                .delete(DELETE_COURIER_ENDPOINT + id)
+                .then()
+                .log().body()
+                .statusCode(HTTP_OK);
+    }
+
+    public void createDoubleCourierExpectStatus_409_CONFLICT(CourierModel courierModel) {
+
+        given()
+                .log().body()
+                .contentType(ContentType.JSON)
+                .body(courierModel)
+                .post(COURIER_ENDPOINT)
+                .then()
+                .log().all()
+                .statusCode(HTTP_CONFLICT)
+                .body("message", equalTo("Этот логин уже используется. Попробуйте другой."));;
     }
 }
 

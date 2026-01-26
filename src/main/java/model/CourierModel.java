@@ -21,6 +21,8 @@ public class CourierModel {
         this.login = login;
     }
 
+    public CourierModel() {
+    }
 
     public String getLogin() {
         return login;

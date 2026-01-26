@@ -1,63 +1,45 @@
 import io.qameta.allure.Step;
 import io.qameta.allure.junit4.DisplayName;
-import io.restassured.http.ContentType;
 
-import model.UtilityCourierPOM;
-import model.UtilityOrderPOM;
+import model.OrderModel;
+import model.UtilityOrderAPI;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
-import static io.restassured.RestAssured.given;
-import static org.hamcrest.Matchers.notNullValue;
 
 public class OrderWithoutColorTest {
 
-    private static final UtilityCourierPOM utilityCourierPOM = new UtilityCourierPOM();
-    private static final String BASE_URL = utilityCourierPOM.getBaseUri();
-    private static final String delete = UtilityOrderPOM.deleteOrderEndpoint;
+
+    private UtilityOrderAPI utilityOrderAPI;
+    private OrderModel orderWithoutColor;
+
+    @Before
+    public void setUp() {
+        this.orderWithoutColor = new OrderModel(
+                UtilityOrderAPI.FIRSTNAME,
+                UtilityOrderAPI.LASTNAME,
+                UtilityOrderAPI.ADDRES,
+                UtilityOrderAPI.METROSTATION,
+                UtilityOrderAPI.PHONE,
+                UtilityOrderAPI.RENTTIME,
+                UtilityOrderAPI.DELIVERYDATE,
+                UtilityOrderAPI.COMMENT,
+                null);
+        this.utilityOrderAPI = new UtilityOrderAPI();
+    }
 
     @Test
-    @DisplayName("Create orders without Color field")
-    public void createOrderWithoutColorField() {
-        Integer id = createOrderWithoutColorStep();
-        deleteOrderWithoutColorStep(id);
+    @DisplayName("Create order Without colors")
+    @Step("Create order without color field")
+    public void createOrderWithoutColorTest() {
+        utilityOrderAPI.createOrder(orderWithoutColor);
     }
 
-    @Step("1. Create order without color field")
-    private Integer createOrderWithoutColorStep() {
-        String jsonWithoutColor = "{" +
-                "\"firstName\":\"" + UtilityOrderPOM.FIRSTNAME + "\"," +
-                "\"lastName\":\"" + UtilityOrderPOM.LASTNAME + "\"," +
-                "\"address\":\"" + UtilityOrderPOM.ADDRES + "\"," +
-                "\"metroStation\":\"" + UtilityOrderPOM.METROSTATION + "\"," +
-                "\"phone\":\"" + UtilityOrderPOM.PHONE + "\"," +
-                "\"rentTime\":" + UtilityOrderPOM.RENTTIME + "," +
-                "\"deliveryDate\":\"" + UtilityOrderPOM.DELIVERYDATE + "\"," +
-                "\"comment\":\"" + UtilityOrderPOM.COMMENT + "\"" +
-                "}";
-
-        return given()
-                .baseUri(BASE_URL)
-                .log().body()
-                .contentType(ContentType.JSON)
-                .body(jsonWithoutColor)
-                .post(UtilityOrderPOM.orderEndpoint)
-                .then()
-                .statusCode(201)
-                .log().body()
-                .log().status()
-                .body("track", notNullValue())
-                .extract().path("track");
-    }
-
-    @Step("2. Delete order without color field")
-    private void deleteOrderWithoutColorStep(Integer id) {
-        given()
-                .contentType(ContentType.JSON)
-                .baseUri(BASE_URL)
-                .log().all()
-                .put(delete + "?track=" + id)
-                .then()
-                .statusCode(200)
-                .log().body();
+    @After
+    @DisplayName("Cancel order Without colors")
+    @Step("Delete order without color field")
+    public void deleteOrderWithoutColorTest() {
+        utilityOrderAPI.deleteOrder();
     }
 }

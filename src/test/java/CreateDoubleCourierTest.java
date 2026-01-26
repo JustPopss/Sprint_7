@@ -1,75 +1,42 @@
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
-import io.restassured.http.ContentType;
 import model.CourierModel;
-import model.UtilityCourierPOM;
+import model.UtilityCourierAPI;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-import static io.restassured.RestAssured.given;
-import static java.net.HttpURLConnection.*;
-import static model.UtilityCourierPOM.*;
-import static model.UtilityCourierPOM.createCourier;
-import static org.hamcrest.Matchers.equalTo;
+import static model.UtilityCourierAPI.*;
 
-public class CreatDoubleCourierTest {
 
-    static UtilityCourierPOM utilityCourierPOM = new UtilityCourierPOM();
-    String password = utilityCourierPOM.getPassword();
-    String login = utilityCourierPOM.getLogin();
+public class CreateDoubleCourierTest {
+
+    static UtilityCourierAPI utilityCourierAPI = new UtilityCourierAPI();
+    CourierModel courier = new CourierModel(LOGIN, PASSWORD, FIRSTNAME);
     private static int id;
 
     @BeforeClass
     public static void setUp() {
-        RestAssured.baseURI = utilityCourierPOM.getBaseUri();
+        RestAssured.baseURI = utilityCourierAPI.getBaseUri();
     }
 
     @Before
     @DisplayName("Create new courier with valid data")
     public void createNewCourierTest201() {
-        CourierModel courier = new CourierModel(LOGIN, PASSWORD, FIRSTNAME);
-
-        createCourier(courier)
-                .then()
-                .log().body()
-                .statusCode(HTTP_CREATED)
-                .body("ok", equalTo(true));
-
-        id = given()
-                .log().body()
-                .contentType(ContentType.JSON)
-                .body(courier)
-                .when()
-                .post(loginEndpoint)
-                .then()
-                .log().body()
-                .statusCode(HTTP_OK)
-                .extract().path("id");
+        utilityCourierAPI.createCourierExpectStatus_200_OK(courier);
+        utilityCourierAPI.loginCourierExpectStatus_200_OK(courier);
     }
 
     @Test
     @DisplayName("Try to create courier when courier already created")
-    public void bTryToCreateDoubleCourierTest409() {
-        CourierModel courier = new CourierModel(LOGIN, PASSWORD, FIRSTNAME);
-        createCourier(courier)
-                .then()
-                .log().body()
-                .statusCode(HTTP_CONFLICT)
-                .body("message", equalTo("Этот логин уже используется. Попробуйте другой."));
+    public void tryToCreateDoubleCourierTest409() {
+        utilityCourierAPI.createDoubleCourierExpectStatus_409_CONFLICT(courier);
     }
 
     @After
     @DisplayName("Deleting courier with id")
-    public void deleteCourierTest200() {
-        given()
-                .log().body()
-                .contentType(ContentType.JSON)
-                .delete(deleteEndpoint+id)
-                .then()
-                .log().body()
-                .statusCode(HTTP_OK);
+    public void deleteCourier() {
+        utilityCourierAPI.deleteCourierExpectStatus_200_OK();
     }
-
 }
