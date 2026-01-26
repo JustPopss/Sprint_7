@@ -12,7 +12,6 @@ import static io.restassured.RestAssured.given;
 import static java.net.HttpURLConnection.HTTP_BAD_REQUEST;
 import static java.net.HttpURLConnection.HTTP_NOT_FOUND;
 import static model.UtilityCourierPOM.*;
-import static model.UtilityCourierPOM.loginEndpoint;
 import static org.hamcrest.Matchers.equalTo;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -25,62 +24,65 @@ public class InvalidDataCourierTests {
         RestAssured.baseURI = utilityCourierPOM.getBaseUri();
     }
 
-    @Test //если какого-то поля нет (пароль=null), запрос возвращает ошибку;
+    @Test //Create. Если какого-то поля нет (пароль=null), запрос возвращает ошибку;
+    // с RestAssured 5.0+, null-поля исключаются из JSON по умолчанию
+    // (поэтому нет смысла делать поле=null \ отсутствие поля
     @DisplayName("Create courier with Password=null")
     public void aCreateCourierWithNullPasswordTest400() {
         CourierModel courier = new CourierModel(LOGIN, null);
         createCourier(courier)
                 .then()
-                .log().all()
+                .log().body()
                 .statusCode(HTTP_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
 
     }
 
-    @Test //если какого-то поля нет (логин=null), запрос возвращает ошибку;
+    @Test //Create. Если какого-то поля нет (логин=null), запрос возвращает ошибку;
+
     @DisplayName("Create courier with Login=null")
     public void bCreateCourierWithNullLoginTest400() {
         CourierModel courier = new CourierModel(null,PASSWORD);
         createCourier(courier)
                 .then()
-                .log().all()
+                .log().body()
                 .statusCode(HTTP_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
 
     }
 
-    @Test //если какого-то поля нет (логин), запрос возвращает ошибку;
+    @Test //Create. Если какого-то поля нет (логин), запрос возвращает ошибку;
     @DisplayName("Create courier without Login field")
     public void cCreateCourierWithoutLoginTest400() {
         given()
-                .log().all()
+                .log().body()
                 .contentType(ContentType.JSON)
                 .body("{\"password\": \"1234\"}")
                 .when()
                 .post(courierEndpoint)
                 .then()
-                .log().all()
+                .log().body()
                 .statusCode(HTTP_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
-    @Test //если какого-то поля нет (пароль), запрос возвращает ошибку;
+    @Test //Create. Если какого-то поля нет (пароль), запрос возвращает ошибку;
     @DisplayName("Create courier without Password field")
     public void dCreateCourierWithoutPasswordTest400() {
         given()
-                .log().all()
+                .log().body()
                 .contentType(ContentType.JSON)
                 .body("{\"login\": \"login\"}")
                 .when()
                 .post(courierEndpoint)
                 .then()
-                .log().all()
+                .log().body()
                 .statusCode(HTTP_BAD_REQUEST)
                 .body("message", equalTo("Недостаточно данных для создания учетной записи"));
     }
 
 
-    @Test //система вернёт ошибку, если неправильно указать логин;
+    @Test //Login. Система вернёт ошибку, если неправильно указать логин;
     @DisplayName("Try to login courier with invalid Login")
     public void eLoginCourierWithInvalidLoginTest404() {
         CourierModel courier = new CourierModel(utilityCourierPOM.WRONGLOGIN, PASSWORD);

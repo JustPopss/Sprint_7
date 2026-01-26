@@ -5,19 +5,20 @@ import io.restassured.http.ContentType;
 import io.restassured.response.Response;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.notNullValue;
 
 public class UtilityCourierPOM {
 
     private static final String BASE_URI = "https://qa-scooter.praktikum-services.ru";
 
+
     public String getBaseUri() {
         return BASE_URI;
     }
 
-    public static String courierEndpoint = "/api/v1/courier";
-    public static String loginEndpoint = "/api/v1/courier/login";
-    public static String deleteEndpoint = "/api/v1/courier/";
-
+    public static final String COURIER_ENDPOINT = "/api/v1/courier";
+    public static final String LOGIN_COURIER_ENDPOINT = "/api/v1/courier/login";
+    public static final String DELETE_COURIER_ENDPOINT = "/api/v1/courier/";
 
     static Faker faker = new Faker();
     public static final String LOGIN = faker.name().lastName() + System.currentTimeMillis();
@@ -41,7 +42,7 @@ public class UtilityCourierPOM {
                 .contentType(ContentType.JSON)
                 .body(courierModel)
                 .when()
-                .post(courierEndpoint)
+                .post(COURIER_ENDPOINT)
                 .then()
                 .extract().response();
     }
@@ -52,8 +53,12 @@ public class UtilityCourierPOM {
                 .contentType(ContentType.JSON)
                 .body(courierModel)
                 .when()
-                .post(loginEndpoint)
+                .post(LOGIN_COURIER_ENDPOINT)
                 .then()
                 .extract().response();
     }
 }
+
+
+
+
