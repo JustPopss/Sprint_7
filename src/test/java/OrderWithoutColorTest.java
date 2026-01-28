@@ -1,5 +1,4 @@
 import io.qameta.allure.Step;
-import io.qameta.allure.junit4.DisplayName;
 
 import model.OrderModel;
 import model.UtilityOrderAPI;
@@ -30,16 +29,14 @@ public class OrderWithoutColorTest {
     }
 
     @Test
-    @DisplayName("Create order Without colors")
     @Step("Create order without color field")
     public void createOrderWithoutColorTest() {
-        utilityOrderAPI.createOrder(orderWithoutColor);
+        utilityOrderAPI.createOrderExpectStatus201CREATED(orderWithoutColor);
     }
 
     @After
-    @DisplayName("Cancel order Without colors")
     @Step("Delete order without color field")
     public void deleteOrderWithoutColorTest() {
-        utilityOrderAPI.deleteOrder();
+        utilityOrderAPI.deleteOrderExpectStatus200OK();
     }
 }

@@ -31,7 +31,7 @@ public class OrderColorParameterizedTest {
                         UtilityOrderAPI.RENTTIME,
                         UtilityOrderAPI.DELIVERYDATE,
                         UtilityOrderAPI.COMMENT,
-                        UtilityOrderAPI.COLORBLACK
+                        UtilityOrderAPI.COLOR_BLACK
                 )},
                 {"Тест с цветом: GREY", new OrderModel(
                         UtilityOrderAPI.FIRSTNAME,
@@ -42,7 +42,7 @@ public class OrderColorParameterizedTest {
                         UtilityOrderAPI.RENTTIME,
                         UtilityOrderAPI.DELIVERYDATE,
                         UtilityOrderAPI.COMMENT,
-                        UtilityOrderAPI.COLORGREY
+                        UtilityOrderAPI.COLOR_GREY
                 )},
                 {"Тест с обоими цветами: BLACK + GREY", new OrderModel(
                         UtilityOrderAPI.FIRSTNAME,
@@ -53,7 +53,7 @@ public class OrderColorParameterizedTest {
                         UtilityOrderAPI.RENTTIME,
                         UtilityOrderAPI.DELIVERYDATE,
                         UtilityOrderAPI.COMMENT,
-                        UtilityOrderAPI.COLORBOTH
+                        UtilityOrderAPI.COLOR_BOTH
                 )}
         };
     }
@@ -61,12 +61,12 @@ public class OrderColorParameterizedTest {
     @Test
     @Step("Create orders")
     public void createOrderTest() {
-        utilityOrderAPI.createOrder(this.order);
+        utilityOrderAPI.createOrderExpectStatus201CREATED(this.order);
     }
 
     @After
     @Step("Delete order by track")
     public void deleteOrderStep() {
-        utilityOrderAPI.deleteOrder();
+        utilityOrderAPI.deleteOrderExpectStatus200OK();
     }
 }

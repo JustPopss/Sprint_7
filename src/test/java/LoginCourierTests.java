@@ -12,24 +12,31 @@ import static model.UtilityCourierAPI.*;
 public class LoginCourierTests {
 
     static UtilityCourierAPI utilityCourierAPI = new UtilityCourierAPI();
+    CourierModel courier = new CourierModel(LOGIN, PASSWORD, FIRSTNAME);
+    private int id;
 
     @BeforeClass
     public static void setUp() {
         RestAssured.baseURI = utilityCourierAPI.getBaseUri();
+
     }
 
     @Before
     @DisplayName("Create and delete new courier with valid data")
     @Step("Create and extract id")
     public void createNewCourierTest201() {
-        CourierModel courier = new CourierModel(LOGIN, PASSWORD, FIRSTNAME);
-        utilityCourierAPI.createCourierExpectStatus_200_OK(courier);
-        utilityCourierAPI.loginCourierExpectStatus_200_OK(courier);
+        utilityCourierAPI.createCourierExpectStatus200OK(courier);
     }
 
     @Test
-    @DisplayName("Delete a new courier with id")
+    @Step("Login courier by id")
+    public void loginNewCourierTest200() {
+        utilityCourierAPI.loginCourierExpectStatus200OK(courier);
+    }
+
+    @After
+    @Step("Delete a new courier with id")
     public void deleteCourierTest200() {
-        utilityCourierAPI.deleteCourierExpectStatus_200_OK();
+        utilityCourierAPI.deleteCourierExpectStatus200OK();
     }
 }

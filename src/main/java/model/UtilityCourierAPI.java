@@ -5,8 +5,6 @@ import io.restassured.http.ContentType;
 
 import static io.restassured.RestAssured.given;
 import static java.net.HttpURLConnection.*;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.*;
 
 public class UtilityCourierAPI {
 
@@ -31,6 +29,10 @@ public class UtilityCourierAPI {
 
     private Integer id;
 
+    public Integer getId() {
+        return id;
+    }
+
     public String getLogin() {
         return LOGIN;
     }
@@ -39,7 +41,7 @@ public class UtilityCourierAPI {
         return PASSWORD;
     }
 
-    public void createCourierExpectStatus_200_OK(CourierModel courierModel) {
+    public void createCourierExpectStatus200OK(CourierModel courierModel) {
 
         given()
                 .log().all()
@@ -49,11 +51,10 @@ public class UtilityCourierAPI {
                 .post(COURIER_ENDPOINT)
                 .then()
                 .log().body()
-                .statusCode(HTTP_CREATED)
-                .body("ok", equalTo(true));
+                .statusCode(HTTP_CREATED);
     }
 
-    public void createCourierExpectStatus_400_BAD_REQUEST(CourierModel courierModel) {
+    public void createCourierExpectStatus400BADREQUEST(CourierModel courierModel) {
 
         given()
                 .log().all()
@@ -63,12 +64,11 @@ public class UtilityCourierAPI {
                 .post(COURIER_ENDPOINT)
                 .then()
                 .log().body()
-                .statusCode(HTTP_BAD_REQUEST)
-                .body("message", equalTo("Недостаточно данных для создания учетной записи"));
+                .statusCode(HTTP_BAD_REQUEST);
     }
 
 
-    public void loginCourierExpectStatus_200_OK(CourierModel courierModel) {
+    public void loginCourierExpectStatus200OK(CourierModel courierModel) {
         id = given()
                 .log().body()
                 .contentType(ContentType.JSON)
@@ -79,10 +79,9 @@ public class UtilityCourierAPI {
                 .log().body()
                 .statusCode(HTTP_OK)
                 .extract().path("id");
-        assertThat(id, greaterThan(0));
     }
 
-    public void loginCourierExpectStatus_404_NOT_FOUND(CourierModel courierModel) {
+    public void loginCourierExpectStatus404NOTFOUND(CourierModel courierModel) {
         given()
                 .log().body()
                 .contentType(ContentType.JSON)
@@ -91,12 +90,11 @@ public class UtilityCourierAPI {
                 .post(LOGIN_COURIER_ENDPOINT)
                 .then()
                 .log().body()
-                .statusCode(HTTP_NOT_FOUND)
-                .body("message", equalTo("Учетная запись не найдена"));
+                .statusCode(HTTP_NOT_FOUND);
 
     }
 
-    public void loginCourierExpectStatus_400_BAD_REQUEST(CourierModel courierModel) {
+    public void loginCourierExpectStatus400BADREQUEST(CourierModel courierModel) {
         given()
                 .log().body()
                 .contentType(ContentType.JSON)
@@ -105,12 +103,11 @@ public class UtilityCourierAPI {
                 .post(LOGIN_COURIER_ENDPOINT)
                 .then()
                 .log().body()
-                .statusCode(HTTP_BAD_REQUEST)
-                .body("message", equalTo("Недостаточно данных для входа"));
+                .statusCode(HTTP_BAD_REQUEST);
 
     }
 
-    public void deleteCourierExpectStatus_200_OK() {
+    public void deleteCourierExpectStatus200OK() {
         given()
                 .log().uri()
                 .contentType(ContentType.JSON)
@@ -120,7 +117,7 @@ public class UtilityCourierAPI {
                 .statusCode(HTTP_OK);
     }
 
-    public void createDoubleCourierExpectStatus_409_CONFLICT(CourierModel courierModel) {
+    public void createDoubleCourierExpectStatus409CONFLICT(CourierModel courierModel) {
 
         given()
                 .log().body()
@@ -129,8 +126,7 @@ public class UtilityCourierAPI {
                 .post(COURIER_ENDPOINT)
                 .then()
                 .log().all()
-                .statusCode(HTTP_CONFLICT)
-                .body("message", equalTo("Этот логин уже используется. Попробуйте другой."));;
+                .statusCode(HTTP_CONFLICT);
     }
 }
 

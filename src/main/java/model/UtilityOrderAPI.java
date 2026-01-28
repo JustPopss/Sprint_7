@@ -17,6 +17,9 @@ public class UtilityOrderAPI {
     static UtilityCourierAPI utilityCourierAPI = new UtilityCourierAPI();
 
     private Integer id;
+    public Integer getId() {
+        return id;
+    }
     private String url = utilityCourierAPI.getBaseUri();
 
     public final static String ORDER_ENDPOINT = "/api/v1/orders";
@@ -33,13 +36,13 @@ public class UtilityOrderAPI {
     public static final Integer RENTTIME = Integer.valueOf(faker.regexify("[1-9]{1}"));
     public static final String DELIVERYDATE = LocalDate.now().plusDays(new Random().nextInt(10) + 1).format(DateTimeFormatter.ISO_DATE);
     public static final String COMMENT = faker.lorem().sentence(3, 5);
-    public static final List<String> COLORBLACK = Arrays.asList("BLACK");
-    public static final List<String> COLORGREY = Arrays.asList("GREY");
-    public static final List<String> COLORBOTH = Arrays.asList("BLACK", "GREY");
-    public static final List<String> COLOREMPTY = Arrays.asList();
+    public static final List<String> COLOR_BLACK = Arrays.asList("BLACK");
+    public static final List<String> COLOR_GREY = Arrays.asList("GREY");
+    public static final List<String> COLOR_BOTH = Arrays.asList("BLACK", "GREY");
 
 
-    public void deleteOrder() {
+
+    public void deleteOrderExpectStatus200OK() {
 
         given()
                 .contentType(ContentType.JSON)
@@ -51,7 +54,7 @@ public class UtilityOrderAPI {
                 .log().all();
     }
 
-    public void createOrder(OrderModel order) {
+    public void createOrderExpectStatus201CREATED(OrderModel order) {
 
         id = given()
                 .baseUri(url)
@@ -73,6 +76,20 @@ public class UtilityOrderAPI {
                 .then()
                 .statusCode(200)
                 .log().body();
+
+    }
+
+    public void getOrderListExpectStatus200OK(int id) {
+
+        given()
+                .baseUri(url)
+                .log().all()
+                .contentType(ContentType.JSON)
+                .get(ORDER_ENDPOINT + "?courierId=" + id)
+                .then()
+                .statusCode(200)
+                .log().all()
+                .log().status();
 
     }
 

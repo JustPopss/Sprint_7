@@ -1,4 +1,4 @@
-import io.qameta.allure.junit4.DisplayName;
+import io.qameta.allure.Step;
 import io.restassured.RestAssured;
 import model.CourierModel;
 import model.UtilityCourierAPI;
@@ -22,16 +22,16 @@ public class CreateCourierWithInvalidDataTests {
     // Невозможно сделать тесты на невалидные логин и пароль
 
     @Test //Create. Если какого-то поля нет (пароль=null), запрос возвращает ошибку;
-        @DisplayName("Create courier with Password=null")
+    @Step("Create courier with password=null")
     public void createCourierWithNullPasswordTest400() {
         CourierModel courier = new CourierModel(LOGIN, null);
-        utilityCourierAPI.createCourierExpectStatus_400_BAD_REQUEST(courier);
+        utilityCourierAPI.createCourierExpectStatus400BADREQUEST(courier);
     }
 
     @Test //Create. Если какого-то поля нет (логин=null), запрос возвращает ошибку;
-    @DisplayName("Create courier with Login=null")
+    @Step("Create courier with Login=null")
     public void createCourierWithNullLoginTest400() {
         CourierModel courier = new CourierModel(null,PASSWORD);
-        utilityCourierAPI.createCourierExpectStatus_400_BAD_REQUEST(courier);
+        utilityCourierAPI.createCourierExpectStatus400BADREQUEST(courier);
     }
 }
