@@ -35,7 +35,7 @@ public class OrderWithoutColorTest {
     }
 
     @After
-    @Step("Delete order without color field")
+    @Step("Delete order without color field111111111111")
     public void deleteOrderWithoutColorTest() {
         utilityOrderAPI.deleteOrderExpectStatus200OK();
     }
